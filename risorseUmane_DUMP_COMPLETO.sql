@@ -1,4 +1,4 @@
--- ============================================
+-- Active: 1769160010611@@127.0.0.1@3306
 -- DUMP COMPLETO DATABASE risorseUmane (OTTIMIZZATO)
 -- ============================================
 
@@ -13,7 +13,7 @@ CREATE TABLE regions (
     region_name VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB;
 
-INSERT INTO regions(ID, region_name) VALUES
+INSERT INTO regions(ID, region_name) VALUES 
 (1,'Europe'),
 (2,'Americas'),
 (3,'Asia'),
@@ -30,7 +30,7 @@ CREATE TABLE countries (
     FOREIGN KEY (IDregions) REFERENCES regions(ID) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-INSERT INTO countries(ID, country_id, country_name, IDregions) VALUES
+INSERT INTO countries(ID, country_id, country_name, IDregions) VALUES 
 (1,'AR','Argentina',2), (2,'AU','Australia',3), (3,'BE','Belgium',1),
 (4,'BR','Brazil',2), (5,'CA','Canada',2), (6,'CH','Switzerland',1),
 (7,'CN','China',3), (8,'DE','Germany',1), (9,'DK','Denmark',1),
@@ -55,7 +55,7 @@ CREATE TABLE locations (
     FOREIGN KEY (IDcountries) REFERENCES countries(ID) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-INSERT INTO locations(ID, location_id, street_address, postal_code, city, state_province, IDcountries) VALUES
+INSERT INTO locations(ID, location_id, street_address, postal_code, city, state_province, IDcountries) VALUES 
 (1,1400,'2014 Jabberwocky Rd','26192','Southlake','Texas',23),
 (2,1500,'2011 Interiors Blvd','99236','South San Francisco','California',23),
 (3,1700,'2004 Charade Rd','98199','Seattle','Washington',23),
@@ -76,7 +76,7 @@ CREATE TABLE jobs (
     CHECK (max_salary > min_salary)
 ) ENGINE=InnoDB;
 
-INSERT INTO jobs(ID, job_title, min_salary, max_salary) VALUES
+INSERT INTO jobs(ID, job_title, min_salary, max_salary) VALUES 
 (1,'Public Accountant',4200.00,9000.00), (2,'Accounting Manager',8200.00,16000.00),
 (3,'Administration Assistant',3000.00,6000.00), (4,'President',20000.00,40000.00),
 (5,'Administration Vice President',15000.00,30000.00), (6,'Accountant',4200.00,9000.00),
@@ -98,7 +98,7 @@ CREATE TABLE departments (
     FOREIGN KEY (IDlocations) REFERENCES locations(ID) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-INSERT INTO departments(ID, department_name, IDlocations) VALUES
+INSERT INTO departments(ID, department_name, IDlocations) VALUES 
 (1,'Administration',1), (2,'Marketing',1), (3,'Purchasing',3),
 (4,'Human Resources',4), (5,'Shipping',2), (6,'IT',3),
 (7,'Public Relations',4), (8,'Sales',1), (9,'Executive',1),
@@ -125,7 +125,7 @@ CREATE TABLE employees (
     CHECK (salary > 0)
 ) ENGINE=InnoDB;
 
-INSERT INTO employees(ID, employee_id, first_name, last_name, email, phone_number, hire_date, IDjobs, salary, IDmanager, IDdepartments) VALUES
+INSERT INTO employees(ID, employee_id, first_name, last_name, email, phone_number, hire_date, IDjobs, salary, IDmanager, IDdepartments) VALUES 
 (1,100,'Steven','King','steven.king@sqltutorial.org','515.123.4567','1987-06-17',4,24000.00,NULL,9),
 (2,101,'Neena','Kochhar','neena.kochhar@sqltutorial.org','515.123.4568','1989-09-21',5,17000.00,1,9),
 (3,102,'Lex','De Haan','lex.de haan@sqltutorial.org','515.123.4569','1993-01-13',5,17000.00,1,9),
@@ -209,7 +209,7 @@ CREATE TABLE dependents (
     FOREIGN KEY (IDemployees) REFERENCES employees(ID) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-INSERT INTO dependents(ID, dependent_id, first_name, last_name, relationship, IDemployees) VALUES
+INSERT INTO dependents(ID, dependent_id, first_name, last_name, relationship, IDemployees) VALUES 
 (1,1,'Penelope','Gietz','Child',40), (2,2,'Nick','Higgins','Child',39),
 (3,3,'Ed','Whalen','Child',34), (4,4,'Jennifer','King','Child',1),
 (5,5,'Johnny','Kochhar','Child',2), (6,6,'Bette','De Haan','Child',3),
@@ -226,15 +226,37 @@ INSERT INTO dependents(ID, dependent_id, first_name, last_name, relationship, ID
 (27,27,'Julia','Raphaely','Child',15), (28,28,'Woody','Russell','Child',26),
 (29,29,'Alec','Partners','Child',27), (30,30,'Sandra','Taylor','Child',28);
 
--- ============================================
--- INDICI
--- ============================================
-CREATE INDEX idx_countries_region ON countries(IDregions);
-CREATE INDEX idx_locations_country ON locations(IDcountries);
-CREATE INDEX idx_departments_location ON departments(IDlocations);
-CREATE INDEX idx_employees_job ON employees(IDjobs);
-CREATE INDEX idx_employees_manager ON employees(IDmanager);
-CREATE INDEX idx_employees_department ON employees(IDdepartments);
-CREATE INDEX idx_employees_email ON employees(email);
-CREATE INDEX idx_job_history_employee ON job_history(IDemployees);
-CREATE INDEX idx_dependents_employee ON dependents(IDemployees);
+-- QUERY
+
+-- 1. mostrare per ogni department (basta id), il totale degli employee che ci lavorano, ordinato in 
+-- modo decrescente
+
+-- per ogni = GROUP BY !!!!!
+SELECT d.department_name, COUNT(*) AS "n_impiegati"
+FROM departments d, employees e
+WHERE d.ID = e.IDdepartments
+GROUP BY d.ID
+ORDER BY d.department_name DESC;
+
+
+
+-- 2. mostrare per ogni department, il totale degli employee che ci lavorano, ordinato in modo 
+-- decrescente
+
+
+
+-- 3. mostrare per ogni department che ha più di 5 employee, il totale degli employee che ci 
+-- lavorano, ordinato in modo crescente
+-- 4. mostrare per ogni department, il massimo e il minimo dei salari pagati
+-- 5. mostrare per ogni department, la somma e la media (arrotondata a 2 cifre) dei salari pagati
+-- 6. mostrare per ogni manager (basta id) che ne ha più di 4, il numero ordinato decrescente dei 
+-- suoi sottoposti
+-- 7. mostrare i dipartimenti (basta id) che hanno la somma dei salari compresa tra 20000 e 30000 
+-- euro, ordinati in modo crescente
+-- 8. mostrare i dipartimenti che hanno la media dei salari compresa tra 5000 e 7000 euro, ordinati 
+-- in modo crescente
+-- 9. mostrare i country che hanno i codici US, UK e CN e le relative locations
+-- 10. mostrare, ordinati, i country che non hanno locations
+-- 11. mostrare region, country e le relative locations di quei country che hanno i codici IT, DE, CA e 
+-- FR
+-- 12. mostrare per ogni department il totale degli employee che ci lavorano
