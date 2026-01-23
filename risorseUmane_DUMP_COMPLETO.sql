@@ -262,9 +262,31 @@ ORDER BY n_impiegati;
 
 
 -- 4. mostrare per ogni department, il massimo e il minimo dei salari pagati
+
+SELECT d.department_name, MAX(e.salary) AS "maxSalario", MIN(e.salary) AS "minSalario"
+FROM departments d, employees e
+WHERE d.ID = e.IDdepartments
+GROUP BY d.ID
+ORDER BY maxSalario DESC;
+
+
 -- 5. mostrare per ogni department, la somma e la media (arrotondata a 2 cifre) dei salari pagati
--- 6. mostrare per ogni manager (basta id) che ne ha più di 4, il numero ordinato decrescente dei 
+
+SELECT d.department_name, SUM(e.salary) AS "somma", ROUND(AVG(e.salary),2) AS "media"
+FROM departments d, employees e
+WHERE d.ID = e.IDdepartments
+GROUP BY d.ID;
+
+-- 6. mostrare per ogni manager (basta id) che ne ha più di 4 sottoposti, il numero ordinato decrescente dei 
 -- suoi sottoposti
+
+SELECT  m.first_name, COUNT(*) AS "Sottoposti"
+FROM employees e, employees m
+WHERE e.ID = m.IDmanager
+GROUP BY m.IDmanager
+HAVING Sottoposti > 4;
+
+
 -- 7. mostrare i dipartimenti (basta id) che hanno la somma dei salari compresa tra 20000 e 30000 
 -- euro, ordinati in modo crescente
 -- 8. mostrare i dipartimenti che hanno la media dei salari compresa tra 5000 e 7000 euro, ordinati 
