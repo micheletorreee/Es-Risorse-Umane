@@ -243,10 +243,24 @@ ORDER BY d.department_name DESC;
 -- 2. mostrare per ogni department, il totale degli employee che ci lavorano, ordinato in modo 
 -- decrescente
 
+SELECT d.department_name, COUNT(*) AS "n_impiegati"
+FROM departments d, employees e
+WHERE d.ID = e.IDdepartments
+GROUP BY d.ID
+ORDER BY d.department_name DESC;
 
 
 -- 3. mostrare per ogni department che ha più di 5 employee, il totale degli employee che ci 
 -- lavorano, ordinato in modo crescente
+
+SELECT d.department_name, COUNT(*) AS "n_impiegati"
+FROM departments d, employees e
+WHERE d.ID = e.IDdepartments
+GROUP BY d.ID
+HAVING n_impiegati > 5 
+ORDER BY n_impiegati;
+
+
 -- 4. mostrare per ogni department, il massimo e il minimo dei salari pagati
 -- 5. mostrare per ogni department, la somma e la media (arrotondata a 2 cifre) dei salari pagati
 -- 6. mostrare per ogni manager (basta id) che ne ha più di 4, il numero ordinato decrescente dei 
