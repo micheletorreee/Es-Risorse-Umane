@@ -2,6 +2,7 @@
 -- DUMP COMPLETO DATABASE risorseUmane (OTTIMIZZATO)
 -- ============================================
 
+
 CREATE DATABASE IF NOT EXISTS risorseUmane;
 USE risorseUmane;
 
@@ -63,6 +64,7 @@ INSERT INTO locations(ID, location_id, street_address, postal_code, city, state_
 (5,2400,'8204 Arthur St',NULL,'London',NULL,22),
 (6,2500,'Magdalen Centre, The Oxford Science Park','OX9 9ZB','Oxford','Oxford',22),
 (7,2700,'Schwanthalerstr. 7031','80925','Munich','Bavaria',8);
+
 
 -- ============================================
 -- Tabella JOBS
@@ -289,10 +291,60 @@ HAVING Sottoposti > 4;
 
 -- 7. mostrare i dipartimenti (basta id) che hanno la somma dei salari compresa tra 20000 e 30000 
 -- euro, ordinati in modo crescente
+
+SELECT d.department_name, SUM(e.salary) as "somma_salario"
+FROM departments d, employees e
+WHERE d.ID = e.IDdepartments
+GROUP BY d.ID
+HAVING somma_salario BETWEEN 20000 AND 30000
+ORDER BY somma_salario ASC;
+
 -- 8. mostrare i dipartimenti che hanno la media dei salari compresa tra 5000 e 7000 euro, ordinati 
 -- in modo crescente
+
+SELECT d.department_name, ROUND(AVG(e.salary), 2) as "media_salario"
+FROM departments d, employees e
+WHERE d.ID = e.IDdepartments
+GROUP BY d.ID
+HAVING media_salario BETWEEN 5000 AND 7000
+ORDER BY media_salario ASC;
+
 -- 9. mostrare i country che hanno i codici US, UK e CN e le relative locations
--- 10. mostrare, ordinati, i country che non hanno locations
+
+SELECT c.country_id, l.city
+FROM countries c , locations l 
+WHERE c.id = l.IDcountries
+AND c.country_id in ('US','UK','CN');
+--se metti not in prende tutto quello che non c'è nelle parentesi 
+--AND (c.country_id LIKE 'US' OR  c.country_id LIKE 'UK' OR c.country_id LIKE 'CN');
+
+-- 10 a. mostrare, ordinati, i country che hanno locations
+
+SELECT c.country_id, l.city
+FROM countries c, locations l  
+WHERE c.id = l.IDcountries;
+
+--10 b. mostrare,ordinate, le country che non hanno locations
+
+SELECT c.country_id, l.city
+FROM countries c LEFT JOIN locations l on l.IDcountries = c.id 
+WHERE l.IDcountries IS NULL;
+
+
+
+
 -- 11. mostrare region, country e le relative locations di quei country che hanno i codici IT, DE, CA e 
 -- FR
+
+SELECT  r.region_name, c.country_id, l.location_id
+FROM regions r, countries c, locations l
+WHERE r.ID = c.IDregions
+AND c.ID = l.IDcountries
+AND c.country_id in ('IT','DE','CA','FR');
+
 -- 12. mostrare per ogni department il totale degli employee che ci lavorano
+
+SELECT d.department_name, COUNT(*) AS "totale_dipendenti"
+FROM departments d, employees e
+WHERE d.ID = e.IDdepartments
+GROUP BY d.ID;
